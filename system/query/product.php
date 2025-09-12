@@ -1,11 +1,16 @@
 <?php
-function findAllProducts() {
+function findAllProducts()
+{
     global $db;
-    $stmt = $db->query("SELECT * FROM products");
+    $sql = "SELECT p.*, categories.categori_name 
+            FROM products p
+            INNER JOIN categories c ON categories.id = products.categories_id";
+    $stmt = $db->query($sql);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function createProducts() {
+function createProducts()
+{
     global $db;
     $stmt = $db->prepare("INSERT INTO products
         (id, name_product, categories_id, price, stock, gambar) 
