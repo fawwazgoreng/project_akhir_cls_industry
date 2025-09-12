@@ -27,7 +27,6 @@ $users = findAllCategory();
                          <a href="update.php?id=<?= $user['id'] ?>">
                               Edit
                          </a>
-                         
                          <a href="delete.php?id=<?= $user['id'] ?>">
                               Delete
                          </a>

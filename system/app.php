@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__.'/config.php';
+include __DIR__ . '/config.php';
 
 
 function url($url)
@@ -10,44 +10,56 @@ function url($url)
 
 function render($view)
 {
-     $basepage = "page";
+     $basepage = __DIR__ . "/../page";  // pastikan sesuai struktur folder
      $render = @include "$basepage/$view.php";
      if (!$render) {
           @include "$basepage/$view/index.php";
      }
 }
 
+
 function middleware()
 {
-     $view = @$_GET['view'] ?: 'login';
-
-     // $isLogin  = false;
-     // if ($isLogin && $view == 'login') {
-     //      header('Location: dashboard');
-     // }
-     // if (!$isLogin && $view != 'login') {
-     //      header('Location: login');
-     // }
+     session_start();
+     $view = $_GET['view'] ?? 'login';
+     $isLogin = isset($_SESSION['login']) && $_SESSION['login'] === true;
+     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'], $_POST['password'])) {
+          $email = $_POST['email'];
+          $password = $_POST['password'];
+          try {
+               $sql = "SELECT * FROM admins WHERE email = ?";
+               $stmt = db->prepare($sql);
+               $stmt->execute([$email]);
+               $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+               // if ($admin && password_verify($password, $admin['password'])) {
+               if ($admin) {
+                    $_SESSION['login'] = true;
+                    $_SESSION['email'] = $admin['email'];
+                    $_SESSION['admin_id'] = $admin['id'];
+                    header("Location: index.php?view=dashboard"); 
+               }
+          } catch (Exception $e) {
+               die("Error login: " . $e->getMessage());
+          }
+     }
+     if ($isLogin && $view === 'login') {
+          header("Location: dashboard.php");
+          exit;
+     }
+     if (!$isLogin && $view !== 'login') {
+          header("Location: login.php");
+          exit;
+     }
      return $view;
-}
-
-function action($url)
-{
-     return url("/actions$url.php");
-}
-
-function redirect($path){
-     $url = url($path);
-     header("Location: $url");
 }
 
 function connection()
 {
      try {
-          $serverAddress = DB_HOST;
-          $databaseName = DB_DATABASE;
-          $username = DB_USERNAME;
-          $password = DB_PASSWORD;
+          $serverAddress = 'localhost';
+          $databaseName = 'akhirsmt1';
+          $username = 'root';
+          $password = '';
           $database = new PDO(
                "mysql:host={$serverAddress};dbname={$databaseName}",
                $username,
@@ -58,5 +70,17 @@ function connection()
           die("Gagal koneksi => " . $e->getMessage());
      }
 }
-
 connection();
+
+
+
+function action($url)
+{
+     return url("/actions$url.php");
+}
+
+function redirect($path)
+{
+     $url = url("$path");
+     header("Location: $url");
+}
