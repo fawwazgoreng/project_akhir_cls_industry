@@ -66,7 +66,7 @@ function middleware()
           }
      }
      if ($isLogin && $view === 'login') {
-          header("Location: dashboard.php");
+          header("Location: index.php?view=dashboard");
           exit;
      }
      if (!$isLogin && $view !== 'login') {

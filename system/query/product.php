@@ -2,9 +2,9 @@
 function findAllProducts()
 {
     global $db;
-    $sql = "SELECT p.*, categories.categori_name 
-            FROM products p
-            INNER JOIN categories c ON categories.id = products.categories_id";
+    $sql = "SELECT products.*, categories.categori_name 
+            FROM products
+            INNER JOIN categories ON categories.id = products.categories_id";
     $stmt = $db->query($sql);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
