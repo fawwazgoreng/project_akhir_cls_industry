@@ -18,6 +18,29 @@ function render($view)
 }
 
 
+function connection()
+{
+    try {
+        $serverAddress = 'localhost';
+        $databaseName  = 'akhirsmt1';
+        $username      = 'root';
+        $password      = '';
+        $db = new PDO(
+            "mysql:host={$serverAddress};dbname={$databaseName};charset=utf8",
+            $username,
+            $password
+        );
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $GLOBALS['db'] = $db;
+        define('db' , $db);
+    } catch (PDOException $e) {
+        die("Gagal koneksi => " . $e->getMessage());
+    }
+}
+
+connection();
+
 function middleware()
 {
      session_start();
@@ -36,7 +59,7 @@ function middleware()
                     $_SESSION['login'] = true;
                     $_SESSION['email'] = $admin['email'];
                     $_SESSION['admin_id'] = $admin['id'];
-                    header("Location: index.php?view=dashboard"); 
+                    header("Location: index.php?view=dashboard");
                }
           } catch (Exception $e) {
                die("Error login: " . $e->getMessage());
@@ -53,24 +76,6 @@ function middleware()
      return $view;
 }
 
-function connection()
-{
-     try {
-          $serverAddress = 'localhost';
-          $databaseName = 'akhirsmt1';
-          $username = 'root';
-          $password = '';
-          $database = new PDO(
-               "mysql:host={$serverAddress};dbname={$databaseName}",
-               $username,
-               $password,
-          );
-          define('db', $database);
-     } catch (\Exception $e) {
-          die("Gagal koneksi => " . $e->getMessage());
-     }
-}
-connection();
 
 
 

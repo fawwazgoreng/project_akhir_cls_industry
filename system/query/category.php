@@ -2,7 +2,7 @@
 
 function findAllCategory()
 {
-     return db->query("select * from users order by id desc");
+     return db->query("select * from categories order by id desc");
 }
 
 function createCategory()
