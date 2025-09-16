@@ -8,7 +8,7 @@ useQuery('category.php');
 $category = $_GET['category'] ?? 'all';
 
 $categories = findAllCategories();
-$menus = findProductsByCategoryId($category);
+$menus = findProductsByCategoryName($category);
 $cart  = $_SESSION['cart'] ?? [];
 
 $subtotal = 0;

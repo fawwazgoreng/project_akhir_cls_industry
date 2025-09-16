@@ -1,40 +1,30 @@
-<?php 
+<?php
 session_start();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    switch ($_POST['action']) {
-        case 'add':
-            $id = $_POST['id'];
-            $price = (float)($_POST['price'] ?? 0);
+include __DIR__ . "/../../system/action.php";
+useQuery('order.php'); // load query helper
 
-            if ($price == 0) {
-                exit('Invalid product price.');
-            }
+$action = $_POST['action'] ?? null;
 
-            if (isset($_SESSION['cart'][$id])) {
-                $_SESSION['cart'][$id]['qty'] += 1;
-            } else {
-                $_SESSION['cart'][$id] = [
-                    'id'       => $id,
-                    'name'     => $_POST['name'] ?? '',
-                    'price'    => $price,
-                    'qty'      => 1,
-                    'discount' => 0
-                ];
-            }
-            break;
-        case 'update':
-            $id = $_POST['id'];
-            if (isset($_SESSION['cart'][$id])) {
-                $_SESSION['cart'][$id]['qty'] = max(1, (int)($_POST['qty'] ?? 1)); // minimum 1 qty
-                $_SESSION['cart'][$id]['discount'] = max(0, (int)($_POST['discount'] ?? 0)); // minimum 0 discount
-            }
-            break;
-        case 'delete':
-            $id = $_POST['id'];
-            if (isset($_SESSION['cart'][$id])) {
-                unset($_SESSION['cart'][$id]);
-            }
-            break;
+if ($action === 'add') {
+    // if (empty($_SESSION['cart'])) {
+        // redirect("/index.php?view=dashboard&msg=Cart+is+empty");
+    // }
+
+    foreach ($_SESSION['cart'] as $id => &$item) {
+        $discount = min(max(0, $item['discount'] ?? 0), 100);
+        $priceAfterDiscount = $item['price'] - ($item['price'] * $discount / 100);
+        $item['total_price'] = $priceAfterDiscount * $item['qty'];
+    }
+    unset($item);
+    try {
+        $orderId = createOrders();
+        redirect("index.php?view=transaksi&order_id={$orderId}&msg=Order+success");
+        unset($_SESSION['cart']);
+    } catch (Exception $e) {
+        redirect("/index.php?view=dashboard&msg=" . urlencode("Error: " . $e->getMessage()));
     }
 }
+
+// redirect("index.php?view=dashboard");
+exit;

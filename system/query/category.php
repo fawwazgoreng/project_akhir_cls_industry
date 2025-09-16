@@ -7,10 +7,10 @@ function findAllCategories()
      return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function findProductsByCategoryId($category)
+function findProductsByCategoryName($category)
 {
      global $db;
-     $sql = "SELECT products.* , categories.categori_name 
+     $sql = "SELECT products.* , categories.categori_name
             FROM products
             INNER JOIN categories ON categories.id = products.categories_id";
      if ($category !== 'all') {

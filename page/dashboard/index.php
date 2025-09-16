@@ -4,7 +4,6 @@ session_start();
 // Includes
 include __DIR__ . "/../../system/action.php";
 include __DIR__ . "/../../actions/products/cart.php";
-include __DIR__ . "/../../actions/order/order.php";
 
 useQuery('product.php');
 useQuery('category.php');
@@ -16,7 +15,7 @@ define('TAX_RATE', 0.11);
 $categoryParam = $_GET['category'] ?? 'all';
 $categories = findAllCategories();
 
-$menus = is_numeric($categoryParam) ? findProductsByCategoryId($categoryParam) : findAllProducts();
+$menus = $categoryParam ? findProductsByCategoryName($categoryParam) : findAllProducts();
 
 $cart = $_SESSION['cart'] ?? [];
 $totalProduct = 0;
@@ -74,25 +73,24 @@ $total = $subtotal + $tax;
             Semua
           </a>
           <?php foreach ($categories as $cat):
-            $isActive = $categoryParam == $cat['id'] ? 'bg-orange-500 text-white' : 'bg-gray-200';
+            $isActive = $categoryParam == $cat['categori_name'] ? 'bg-orange-500 text-white' : 'bg-gray-200';
           ?>
-            <a href="index.php?view=dashboard&category=<?= $cat['id'] ?>" class="px-4 py-2 rounded-lg <?= $isActive ?>">
+            <a href="index.php?view=dashboard&category=<?= $cat['categori_name'] ?>" class="px-4 py-2 rounded-lg <?= $isActive ?>">
               <?= htmlspecialchars($cat['categori_name']) ?>
             </a>
           <?php endforeach; ?>
         </div>
 
-        <!-- Products Grid -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <?php foreach ($menus as $m): ?>
             <?php if (!empty($m['stock']) && $m['stock'] > 0): ?>
               <div class="bg-white shadow rounded-xl p-3 flex flex-col items-center">
-                <img src="<?= htmlspecialchars($m['image']) ?>" class="w-28 h-28 object-cover rounded-lg mb-2" alt="<?= htmlspecialchars($m['name_product']) ?>">
+                <img src="<?= htmlspecialchars($m['gambar']) ?>" class="w-28 h-28 object-cover rounded-lg mb-2" alt="<?= htmlspecialchars($m['name_product']) ?>">
                 <div class="font-semibold text-center text-sm"><?= htmlspecialchars($m['name_product']) ?></div>
                 <div class="text-gray-600">Rp. <?= number_format($m['price'], 0, ',', '.') ?></div>
                 <form method="post" class="mt-2">
                   <input type="hidden" name="action" value="add">
-                  <input type="hidden" name="id" value="<?= $m['Id'] ?>">
+                  <input type="hidden" name="id" value="<?= $m['id'] ?>">
                   <input type="hidden" name="name" value="<?= htmlspecialchars($m['name_product']) ?>">
                   <input type="hidden" name="price" value="<?= $m['price'] ?>">
                   <input type="hidden" name="discount" value="<?= $m['discount'] ?? 0 ?>">
@@ -115,7 +113,7 @@ $total = $subtotal + $tax;
             <div class="border rounded-lg p-2">
               <form method="post" class="space-y-1">
                 <div class="flex justify-between items-center">
-                  <p class="font-semibold"><?= htmlspecialchars($item['name_product']) ?></p>
+                  <p class="font-semibold"><?= htmlspecialchars($item['name']) ?></p>
                   <button type="submit" name="action" value="delete" class="text-red-500 text-sm">✕</button>
                 </div>
                 <div class="flex space-x-2 text-sm">
@@ -131,7 +129,6 @@ $total = $subtotal + $tax;
             </div>
           <?php endforeach; ?>
         </div>
-
         <!-- Cart Summary -->
         <div class="mt-4 border-t pt-4 space-y-1">
           <div class="flex justify-between text-sm">
@@ -146,11 +143,9 @@ $total = $subtotal + $tax;
             <span>Total</span>
             <span>Rp. <?= number_format($total, 0, ',', '.') ?></span>
           </div>
-
-          <!-- Action Buttons -->
           <div class="flex space-x-2 mt-3">
             <button class="flex-1 py-2 bg-gray-300 rounded-lg">Hold Order</button>
-            <form action="" method="POST" class="flex-1 w-full">
+            <form action="<?= action('/order/order') ?>" method="POST" class="flex-1 w-full">
               <input type="hidden" name="action" value="add">
               <input type="hidden" name="total_product" value="<?= $totalProduct ?>">
               <input type="hidden" name="total_payment" value="<?= $total ?>">

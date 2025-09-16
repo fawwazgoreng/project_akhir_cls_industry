@@ -9,17 +9,17 @@ function findAllProducts()
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function createProducts()
+function createProduct($data)
 {
     global $db;
-    $stmt = $db->prepare("INSERT INTO products
-        (id, name_product, categories_id, price, stock, gambar) 
-        VALUES (NULL, :name_product, :categories_id, :price, :stock, :gambar)");
-    $stmt->execute([
-        "name_product"   => $_POST['name_product'],
-        "categories_id"  => $_POST['categories_id'],
-        "price"          => $_POST['price'],
-        "stock"          => $_POST['stock'],
-        "gambar"         => $_POST['gambar'],
+    $stmt = $db->prepare("INSERT INTO products 
+        (name_product, price, stock, categories_id, gambar)
+        VALUES (:name_product, :price, :stock, :categories_id, :gambar)");
+    return $stmt->execute([
+        ":name_product"   => $data['name_product'],
+        ":price"          => $data['price'],
+        ":stock"          => $data['stock'],
+        ":categories_id"  => $data['categories_id'],
+        ":gambar"         => $data['gambar'],
     ]);
 }
