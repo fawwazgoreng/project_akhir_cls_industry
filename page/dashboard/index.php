@@ -64,13 +64,11 @@ $total = $subtotal + $tax;
         <a href="logout.php" class="nav-link text-center">❌ <p>Log out</p></a>
       </aside>
 
-      <!-- Main Content -->
       <main class="flex-1 p-4 mt-14 ml-40 mr-96 overflow-y-auto">
         <a href="index.php?view=product_add" class="inline-block py-2 w-32 px-4 bg-blue-500 my-4 rounded-lg text-center text-white font-bold">
           Tambah
         </a>
 
-        <!-- Category Filter -->
         <div class="flex space-x-2 mb-4">
           <a href="index.php?view=dashboard&category=all"
             class="px-4 py-2 rounded-lg <?= $categoryParam === 'all' ? 'bg-orange-500 text-white' : 'bg-gray-200' ?>">
