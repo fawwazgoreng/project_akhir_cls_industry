@@ -3,7 +3,10 @@ session_start();
 include __DIR__ . "/../../system/action.php";
 useQuery('customer.php');
 
-$allCus = findAllCustomers();
+$id = $_GET['id'] ?? null;
+
+$customer = findCustomerById($id);
+$orders = findOrderByCustomersId($id);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,31 +33,30 @@ $allCus = findAllCustomers();
         <a href="logout.php" class="flex items-center flex-col px-4 py-2 text-center rounded-lg">❌ <p>Log out</p></a>
       </aside>
       <main class="flex-1 p-4 overflow-y-auto mt-14">
-        <h1 class="text-2xl font-bold mt-2">Customers</h1>
-        <a href="index.php?view=product_add" class="inline-block py-2 w-32 px-4 bg-blue-500 my-4 rounded-lg text-center text-white font-bold">
-          Tambah
-        </a>
-        <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md">
+        <h1 class="text-2xl font-bold mt-2">Daftar orders customer</h1>
+        <h2><?= htmlspecialchars($customer[0]["username"]) ?></h2>
+        <h2><?= htmlspecialchars($customer[0]["email"]) ?></h2>
+        <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md mt-4">
           <thead class="bg-gray-100">
             <tr>
               <th class="py-3 px-4 text-left font-semibold text-gray-700">No</th>
-              <th class="py-3 px-4 text-left font-semibold text-gray-700">Id Customers</th>
-              <th class="py-3 px-4 text-left font-semibold text-gray-700">Nama Customers</th>
-              <th class="py-3 px-4 text-left font-semibold text-gray-700">Jenis Kelamin</th>
+              <th class="py-3 px-4 text-left font-semibold text-gray-700">Id Order</th>
+              <th class="py-3 px-4 text-left font-semibold text-gray-700">Total Produk</th>
+              <th class="py-3 px-4 text-left font-semibold text-gray-700">Total Payment</th>
               <th class="py-3 px-4 text-center font-semibold text-gray-700">Detail Transaksi</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 bg-white">
-            <?php foreach ($allCus as $index => $custumer): ?>
+            <?php foreach ($orders as $index => $order): ?>
               <tr class="hover:bg-gray-50 transition-colors">
                 <td class="py-3 px-4"><?= $index + 1 ?></td>
-                <td class="py-3 px-4"><?= $custumer["id"] ?></td>
-                <td class="py-3 px-4"><?= $custumer["username"] ?></td>
-                <td class="py-3 px-4"><?= $custumer["jenis_kelamin"] ?></td>
+                <td class="py-3 px-4"><?= $order["id"] ?></td>
+                <td class="py-3 px-4"><?= $order["total_product"] ?></td>
+                <td class="py-3 px-4">Rp <?= number_format($order["total_payment"], 0, ',', '.') ?></td>
                 <td class="py-3 px-4 text-center">
-                  <a href="index.php?view=customer&id=<?= $custumer['id'] ?>"
+                  <a href="index.php?view=order_detail&id=<?= $order['id'] ?>"
                     class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition">
-                    Cek Transaksi
+                    Detail products
                   </a>
                 </td>
               </tr>
@@ -65,5 +67,4 @@ $allCus = findAllCustomers();
     </div>
   </div>
 </body>
-
 </html>

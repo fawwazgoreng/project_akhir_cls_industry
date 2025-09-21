@@ -20,7 +20,6 @@ $categories = findAllCategories();
       <h1 class="text-3xl font-bold text-orange-600 mb-6 text-center">Tambah Produk</h1>
       <form action="<?= action('/products/product_save') ?>" method="POST" enctype="multipart/form-data" class="space-y-5">
         <input type="hidden" name="action" value="add">
-        <!-- Nama Produk -->
         <div>
           <label class="block text-sm font-medium mb-1 text-gray-700">Nama Produk</label>
           <input type="text" name="name_product" required

@@ -9,6 +9,15 @@ function findAllProducts()
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function findProductsById($id)
+{
+    global $db;
+    $sql = "SELECT * FROM products WHERE id = $id";
+    $stmt = $db->query($sql);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
 function createProduct($data)
 {
     global $db;

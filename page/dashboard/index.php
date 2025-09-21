@@ -8,15 +8,20 @@ include __DIR__ . "/../../actions/products/cart.php";
 useQuery('product.php');
 useQuery('category.php');
 
-// Constants
 define('TAX_RATE', 0.11);
 
-// Get selected category
+// Ambil kategori
 $categoryParam = $_GET['category'] ?? 'all';
 $categories = findAllCategories();
 
-$menus = $categoryParam ? findProductsByCategoryName($categoryParam) : findAllProducts();
+// Produk by kategori
+if ($categoryParam === 'all' || !$categoryParam) {
+  $menus = findAllProducts();
+} else {
+  $menus = findProductsByCategoryName($categoryParam);
+}
 
+// Cart
 $cart = $_SESSION['cart'] ?? [];
 $totalProduct = 0;
 $subtotal = 0;
@@ -24,7 +29,7 @@ $subtotal = 0;
 foreach ($cart as $item) {
   $priceAfterDiscount = $item['price'] - ($item['price'] * $item['discount'] / 100);
   $subtotal += $priceAfterDiscount * $item['qty'];
-  $totalProduct++;
+  $totalProduct += $item['qty'];
 }
 $tax = $subtotal * TAX_RATE;
 $total = $subtotal + $tax;
@@ -45,23 +50,22 @@ $total = $subtotal + $tax;
     <header class="bg-white fixed z-10 h-14 w-full p-4 font-bold text-xl text-orange-500">
       Restro POS
     </header>
-
     <div class="flex flex-row">
       <!-- Sidebar -->
       <aside class="w-full md:w-40 fixed h-screen bg-white shadow-md flex flex-col">
         <nav class="flex-1 space-y-1 mt-14">
-          <a href="index.php?view=dashboard" class="flex items-center flex-col px-4 py-2  bg-orange-100 text-orange-600">🏠 <p>Home</p></a>
-          <a href="index.php?view=customers" class="flex items-center flex-col px-4 py-2 hover:bg-orange-100 ">👥 <p>Customer</p></a>
-          <a href="index.php?view=tables" class="flex items-center flex-col px-4 py-2 hover:bg-orange-100 ">📑 <p>Tables</p></a>
-          <a href="index.php?view=chasier" class="flex items-center flex-col px-4 py-2 hover:bg-orange-100 ">🪙 <p>Cashier</p></a>
-          <a href="index.php?view=orders" class="flex items-center flex-col px-4 py-2 hover:bg-orange-100 ">📦 <p>Orders</p></a>
-          <a href="index.php?view=settings" class="flex items-center flex-col px-4 py-2 hover:bg-orange-100 ">⚙️ <p>Settings</p></a>
+          <a href="index.php?view=dashboard" class="flex items-center flex-col px-4 py-2 bg-orange-100 text-orange-600">🏠 <p>Home</p></a>
+          <a href="index.php?view=customers" class="flex items-center flex-col px-4 py-2 hover:bg-orange-100">👥 <p>Customer</p></a>
+          <a href="index.php?view=tables" class="flex items-center flex-col px-4 py-2 hover:bg-orange-100">📑 <p>Tables</p></a>
+          <a href="index.php?view=chasier" class="flex items-center flex-col px-4 py-2 hover:bg-orange-100">🪙 <p>Cashier</p></a>
+          <a href="index.php?view=orders" class="flex items-center flex-col px-4 py-2 hover:bg-orange-100">📦 <p>Orders</p></a>
+          <a href="index.php?view=settings" class="flex items-center flex-col px-4 py-2 hover:bg-orange-100">⚙️ <p>Settings</p></a>
         </nav>
         <a href="logout.php" class="nav-link text-center">❌ <p>Log out</p></a>
       </aside>
 
       <!-- Main Content -->
-      <main class="flex-1 p-4 mt-14 ml-40 overflow-y-auto">
+      <main class="flex-1 p-4 mt-14 ml-40 mr-96 overflow-y-auto">
         <a href="index.php?view=product_add" class="inline-block py-2 w-32 px-4 bg-blue-500 my-4 rounded-lg text-center text-white font-bold">
           Tambah
         </a>
@@ -72,23 +76,27 @@ $total = $subtotal + $tax;
             class="px-4 py-2 rounded-lg <?= $categoryParam === 'all' ? 'bg-orange-500 text-white' : 'bg-gray-200' ?>">
             Semua
           </a>
-          <?php foreach ($categories as $cat):
+          <?php foreach ($categories as $cat): 
             $isActive = $categoryParam == $cat['categori_name'] ? 'bg-orange-500 text-white' : 'bg-gray-200';
           ?>
-            <a href="index.php?view=dashboard&category=<?= $cat['categori_name'] ?>" class="px-4 py-2 rounded-lg <?= $isActive ?>">
+            <a href="index.php?view=dashboard&category=<?= $cat['categori_name'] ?>" 
+               class="px-4 py-2 rounded-lg <?= $isActive ?>">
               <?= htmlspecialchars($cat['categori_name']) ?>
             </a>
           <?php endforeach; ?>
         </div>
 
+        <!-- Products -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <?php foreach ($menus as $m): ?>
             <?php if (!empty($m['stock']) && $m['stock'] > 0): ?>
               <div class="bg-white shadow rounded-xl p-3 flex flex-col items-center">
-                <img src="<?= htmlspecialchars($m['gambar']) ?>" class="w-28 h-28 object-cover rounded-lg mb-2" alt="<?= htmlspecialchars($m['name_product']) ?>">
+                <img src="<?= htmlspecialchars($m['gambar']) ?>" 
+                     class="w-28 h-28 object-cover rounded-lg mb-2" 
+                     alt="<?= htmlspecialchars($m['name_product']) ?>">
                 <div class="font-semibold text-center text-sm"><?= htmlspecialchars($m['name_product']) ?></div>
                 <div class="text-gray-600">Rp. <?= number_format($m['price'], 0, ',', '.') ?></div>
-                <form method="post" class="mt-2">
+                <form method="post" action="index.php?view=dashboard" class="mt-2">
                   <input type="hidden" name="action" value="add">
                   <input type="hidden" name="id" value="<?= $m['id'] ?>">
                   <input type="hidden" name="name" value="<?= htmlspecialchars($m['name_product']) ?>">
@@ -102,11 +110,10 @@ $total = $subtotal + $tax;
         </div>
       </main>
 
-      <!-- Cart Sidebar -->
-      <aside class="w-full md:w-96 min-h-screen bg-white shadow-lg p-4 flex flex-col">
-        <h2 class="font-bold text-lg mb-4 mt-12">Order List</h2>
+      <aside class="w-full fixed right-0 md:w-96 h-screen bg-white shadow-lg p-4 flex flex-col">
+        <h2 class="font-bold mt-14 text-lg mb-4">Order List</h2>
         <div class="flex-1 space-y-3 overflow-y-auto">
-          <?php foreach ($cart as $id => $item):
+          <?php foreach ($cart as $id => $item): 
             $priceAfterDiscount = $item['price'] - ($item['price'] * $item['discount'] / 100);
             $lineTotal = $priceAfterDiscount * $item['qty'];
           ?>
@@ -129,6 +136,7 @@ $total = $subtotal + $tax;
             </div>
           <?php endforeach; ?>
         </div>
+
         <!-- Cart Summary -->
         <div class="mt-4 border-t pt-4 space-y-1">
           <div class="flex justify-between text-sm">
@@ -156,7 +164,5 @@ $total = $subtotal + $tax;
       </aside>
     </div>
   </div>
-
 </body>
-
 </html>

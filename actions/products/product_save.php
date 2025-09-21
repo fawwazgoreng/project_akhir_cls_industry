@@ -42,8 +42,9 @@ try {
         "gambar"        => $imagePath,
     ]);
     $_SESSION['success'] = "Produk berhasil ditambahkan!";
-    header("Location: /index.php?view=dashboard");
+    header("Location: /classindustry/kelas-industri-php-pos-final-project/index.php?view=dashboard");
     exit;
 } catch (Exception $e) {
     die("Error: " . $e->getMessage());
 }
+header("Location: /index.php?view=dashboard");

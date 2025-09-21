@@ -37,14 +37,12 @@ $items = findOrderItems($orderId);
   <div class="min-h-screen flex flex-col items-center p-6">
     <div class="bg-white shadow-lg rounded-xl w-full max-w-2xl p-6">
       <h1 class="text-2xl font-bold text-orange-500 mb-4">Transaksi Berhasil</h1>
-
       <div class="mb-4">
         <p><span class="font-semibold">Order ID:</span> <?= htmlspecialchars($order['id']) ?></p>
         <p><span class="font-semibold">Admin:</span> <?= htmlspecialchars($order['admin_name'] ?? '-') ?></p>
         <p><span class="font-semibold">Customer:</span> <?= htmlspecialchars($order['customer_name'] ?? '-') ?></p>
         <p><span class="font-semibold">Tanggal:</span> <?= htmlspecialchars($order['created_at']) ?></p>
       </div>
-
       <h2 class="text-lg font-semibold mb-2">Detail Produk</h2>
       <table class="w-full border border-gray-300 text-sm mb-4">
         <thead class="bg-gray-200">
