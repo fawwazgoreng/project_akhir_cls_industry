@@ -96,8 +96,7 @@ $categories = findAllCategories();
                                 <?php
                                 $daily = [];
                                 foreach ($menus as $m) {
-                                    // agar dimulai dari data terlama
-                                    $date = substr($m['created_at'], 0, 10);
+                                    $date = $m['created_at'];
                                     if (!isset($daily[$date])) {
                                         $daily[$date] = ['orders' => 0, 'items' => 0, 'pendapatan' => 0];
                                     }
@@ -105,7 +104,7 @@ $categories = findAllCategories();
                                     $daily[$date]['items'] += $m['quantity'] ?? 0;
                                     $daily[$date]['pendapatan'] += $m['total_payment'];
                                 }
-                                // agar dimulai dari data terbaru
+                                // agar dimulai dari data terbaru / terbesar
                                 krsort($daily);
                                 foreach ($daily as $date => $d) :
                                 ?>

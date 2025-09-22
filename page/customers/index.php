@@ -29,7 +29,7 @@ $allCus = findAllCustomers();
         </nav>
         <a href="logout.php" class="flex items-center flex-col px-4 py-2 text-center rounded-lg">❌ <p>Log out</p></a>
       </aside>
-      <main class="flex-1 p-4 overflow-y-auto mt-14">
+      <main class="flex-1 p-4 overflow-y-auto mt-14 max-w-6xl mx-auto">
         <h1 class="text-2xl font-bold mt-2">Customers</h1>
         <a href="index.php?view=product_add" class="inline-block py-2 w-32 px-4 bg-blue-500 my-4 rounded-lg text-center text-white font-bold">
           Tambah

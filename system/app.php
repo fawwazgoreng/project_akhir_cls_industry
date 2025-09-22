@@ -43,38 +43,44 @@ connection();
 
 function middleware()
 {
-     session_start();
-     $view = $_GET['view'] ?? 'login';
-     $isLogin = isset($_SESSION['login']) && $_SESSION['login'] === true;
-     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'], $_POST['password'])) {
-          $email = $_POST['email'];
-          $password = $_POST['password'];
-          try {
-               $sql = "SELECT * FROM admins WHERE email = ?";
-               $stmt = db->prepare($sql);
-               $stmt->execute([$email]);
-               $admin = $stmt->fetch(PDO::FETCH_ASSOC);
-               // if ($admin && password_verify($password, $admin['password'])) {
-               if ($admin) {
+    session_start();
+    $view = $_GET['view'] ?? 'login';
+    $isLogin = isset($_SESSION['login']) && $_SESSION['login'] === true;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $view === 'login') {
+        if (isset($_POST['email'], $_POST['password'])) {
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+            try {
+                $sql = "SELECT * FROM admins WHERE email = ?";
+                $stmt = db->prepare($sql);
+                $stmt->execute([$email]);
+                $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($admin && password_verify($password, $admin['password'])) {
                     $_SESSION['login'] = true;
                     $_SESSION['email'] = $admin['email'];
                     $_SESSION['admin_id'] = $admin['id'];
                     header("Location: index.php?view=dashboard");
-               }
-          } catch (Exception $e) {
-               die("Error login: " . $e->getMessage());
-          }
-     }
-     if ($isLogin && $view === 'login') {
-          header("Location: index.php?view=dashboard");
-          exit;
-     }
-     if (!$isLogin && $view !== 'login') {
-          header("Location: login.php");
-          exit;
-     }
-     return $view;
+                    exit;
+                }
+            } catch (Exception $e) {
+                die("Error login: " . $e->getMessage());
+            }
+        }
+    }
+
+    if ($isLogin && $view === 'login') {
+        header("Location: index.php?view=dashboard");
+        exit;
+    }
+
+    if (!$isLogin && $view !== 'login') {
+        header("Location: login.php");
+        exit;
+    }
+    return $view;
 }
+
 
 
 

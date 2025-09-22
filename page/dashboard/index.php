@@ -63,35 +63,32 @@ $total = $subtotal + $tax;
         </nav>
         <a href="logout.php" class="nav-link text-center">❌ <p>Log out</p></a>
       </aside>
-
       <main class="flex-1 p-4 mt-14 ml-40 mr-96 overflow-y-auto">
+        <h1 class="text-2xl font-bold mt-2">Products</h1>
         <a href="index.php?view=product_add" class="inline-block py-2 w-32 px-4 bg-blue-500 my-4 rounded-lg text-center text-white font-bold">
           Tambah
         </a>
-
         <div class="flex space-x-2 mb-4">
           <a href="index.php?view=dashboard&category=all"
             class="px-4 py-2 rounded-lg <?= $categoryParam === 'all' ? 'bg-orange-500 text-white' : 'bg-gray-200' ?>">
             Semua
           </a>
-          <?php foreach ($categories as $cat): 
+          <?php foreach ($categories as $cat):
             $isActive = $categoryParam == $cat['categori_name'] ? 'bg-orange-500 text-white' : 'bg-gray-200';
           ?>
-            <a href="index.php?view=dashboard&category=<?= $cat['categori_name'] ?>" 
-               class="px-4 py-2 rounded-lg <?= $isActive ?>">
+            <a href="index.php?view=dashboard&category=<?= $cat['categori_name'] ?>"
+              class="px-4 py-2 rounded-lg <?= $isActive ?>">
               <?= htmlspecialchars($cat['categori_name']) ?>
             </a>
           <?php endforeach; ?>
         </div>
-
-        <!-- Products -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <?php foreach ($menus as $m): ?>
             <?php if (!empty($m['stock']) && $m['stock'] > 0): ?>
               <div class="bg-white shadow rounded-xl p-3 flex flex-col items-center">
-                <img src="<?= htmlspecialchars($m['gambar']) ?>" 
-                     class="w-28 h-28 object-cover rounded-lg mb-2" 
-                     alt="<?= htmlspecialchars($m['name_product']) ?>">
+                <img src="<?= htmlspecialchars($m['gambar']) ?>"
+                  class="w-28 h-28 object-cover rounded-lg mb-2"
+                  alt="<?= htmlspecialchars($m['name_product']) ?>">
                 <div class="font-semibold text-center text-sm"><?= htmlspecialchars($m['name_product']) ?></div>
                 <div class="text-gray-600">Rp. <?= number_format($m['price'], 0, ',', '.') ?></div>
                 <form method="post" action="index.php?view=dashboard" class="mt-2">
@@ -107,11 +104,10 @@ $total = $subtotal + $tax;
           <?php endforeach; ?>
         </div>
       </main>
-
       <aside class="w-full fixed right-0 md:w-96 h-screen bg-white shadow-lg p-4 flex flex-col">
         <h2 class="font-bold mt-14 text-lg mb-4">Order List</h2>
         <div class="flex-1 space-y-3 overflow-y-auto">
-          <?php foreach ($cart as $id => $item): 
+          <?php foreach ($cart as $id => $item):
             $priceAfterDiscount = $item['price'] - ($item['price'] * $item['discount'] / 100);
             $lineTotal = $priceAfterDiscount * $item['qty'];
           ?>
@@ -123,9 +119,9 @@ $total = $subtotal + $tax;
                 </div>
                 <div class="flex space-x-2 text-sm">
                   <input type="hidden" name="id" value="<?= $id ?>">
-                  <label>Qty:</label>
+                  <label>Quantity:</label>
                   <input type="number" name="qty" value="<?= $item['qty'] ?>" class="w-14 border rounded px-1">
-                  <label>Disc%:</label>
+                  <label>Diskon%:</label>
                   <input type="number" name="discount" value="<?= $item['discount'] ?>" class="w-14 border rounded px-1">
                   <button type="submit" name="action" value="update" class="px-2 bg-green-500 text-white rounded">✔</button>
                 </div>
@@ -134,8 +130,6 @@ $total = $subtotal + $tax;
             </div>
           <?php endforeach; ?>
         </div>
-
-        <!-- Cart Summary -->
         <div class="mt-4 border-t pt-4 space-y-1">
           <div class="flex justify-between text-sm">
             <span>Subtotal</span>
@@ -163,4 +157,5 @@ $total = $subtotal + $tax;
     </div>
   </div>
 </body>
+
 </html>
